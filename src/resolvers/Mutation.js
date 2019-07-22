@@ -1,16 +1,45 @@
-import uuidv4 from 'uuid/v4'
+import bcrypt from 'bcryptjs'
+import jwt from 'jsonwebtoken'
 
 const Mutation = {
     async createUser(parent, args, { prisma }, info) {
-        // check if email exists in db
-        const emailTaken = await prisma.exists.User({ email: args.data.email })
 
-        // throw error if email already exists in db
-        if (emailTaken) throw new Error('Email taken')
+        if (args.data.password.length < 8) {
+            throw new Error('Password must be 8 characters or longer')
+        }
 
-        // if email doesn't exists in db:
-        return await prisma.mutation.createUser({ data: args.data }, info);
-        // creates and returns new user
+        const password = await bcrypt.hash(args.data.password, 10)
+        // hash will take in password and generate a hash with a length of 10 added onto the hashed password.
+
+        const user = await prisma.mutation.createUser({  // creates and returns new user
+            data: {
+                ...args.data, // spread out data that gets passed in
+                password, // override the password, that user passed in, with the hashed version.
+            }
+        });
+
+        return {
+            user,
+            token: jwt.sign({ userid: user.id }, 'thisisasecret')
+        }
+
+    },
+    async login(parent, args, { prisma }, info) {
+        const user = await prisma.query.user({
+            where: {
+                email: args.data.email
+            }
+        }); // only need the scalar fields back, so no need to provide info as 2nd arg
+
+        if (!user) throw new Error('sorry unable to login: 1');
+
+        const isMatch = await bcrypt.compare(args.data.password, user.password);
+        if (!isMatch) throw new Error('sorry unable to login: 2');
+
+        return {
+            user,
+            token: jwt.sign({ userId: user.id }, 'thisisasecret')
+        }
     },
     async deleteUser(parent, args, { prisma }, info) {
 
