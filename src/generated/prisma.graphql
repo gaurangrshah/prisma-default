@@ -1,5 +1,5 @@
 # source: http://192.168.99.100:4466
-# timestamp: Sun Jul 21 2019 22:56:34 GMT-0400 (Eastern Daylight Time)
+# timestamp: Mon Jul 22 2019 12:07:44 GMT-0400 (Eastern Daylight Time)
 
 type AggregateComment {
   count: Int!
@@ -679,7 +679,7 @@ type User implements Node {
   id: ID!
   name: String!
   email: String!
-  password: String
+  password: String!
   posts(where: PostWhereInput, orderBy: PostOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Post!]
   comments(where: CommentWhereInput, orderBy: CommentOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Comment!]
 }
@@ -697,7 +697,7 @@ type UserConnection {
 input UserCreateInput {
   name: String!
   email: String!
-  password: String
+  password: String!
   posts: PostCreateManyWithoutAuthorInput
   comments: CommentCreateManyWithoutAuthorInput
 }
@@ -715,14 +715,14 @@ input UserCreateOneWithoutPostsInput {
 input UserCreateWithoutCommentsInput {
   name: String!
   email: String!
-  password: String
+  password: String!
   posts: PostCreateManyWithoutAuthorInput
 }
 
 input UserCreateWithoutPostsInput {
   name: String!
   email: String!
-  password: String
+  password: String!
   comments: CommentCreateManyWithoutAuthorInput
 }
 
@@ -754,7 +754,7 @@ type UserPreviousValues {
   id: ID!
   name: String!
   email: String!
-  password: String
+  password: String!
 }
 
 type UserSubscriptionPayload {
