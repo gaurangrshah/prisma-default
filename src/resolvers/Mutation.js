@@ -1,43 +1,28 @@
 import uuidv4 from 'uuid/v4'
 
 const Mutation = {
-    createUser(parent, args, { db }, info) {
-        const emailTaken = db.users.some((user) => user.email === args.data.email)
+    async createUser(parent, args, { prisma }, info) {
+        // check if email exists in db
+        const emailTaken = await prisma.exists.User({ email: args.data.email })
 
-        if (emailTaken) {
-            throw new Error('Email taken')
-        }
+        // throw error if email already exists in db
+        if (emailTaken) throw new Error('Email taken')
 
-        const user = {
-            id: uuidv4(),
-            ...args.data
-        }
-
-        db.users.push(user)
-
-        return user
+        // if email doesn't exists in db:
+        return await prisma.mutation.createUser({ data: args.data }, info);
+        // creates and returns new user
     },
-    deleteUser(parent, args, { db }, info) {
-        const userIndex = db.users.findIndex((user) => user.id === args.id)
+    async deleteUser(parent, args, { prisma }, info) {
 
-        if (userIndex === -1) {
-            throw new Error('User not found')
-        }
+        // check if email exists in db
+        const userExists = await prisma.exists.User({ id: args.id })
 
-        const deletedUsers = db.users.splice(userIndex, 1)
+        // throw error if email already exists in db
+        if (!userExists) throw new Error('Email taken')
 
-        db.posts = db.posts.filter((post) => {
-            const match = post.author === args.id
+        // deletes the matching user, and passes in info as 2nd arg:
+        return prisma.mutation.deleteUser({ where: { id: args.id } }, info);
 
-            if (match) {
-                db.comments = db.comments.filter((comment) => comment.post !== post.id)
-            }
-
-            return !match
-        })
-        db.comments = db.comments.filter((comment) => comment.author !== args.id)
-
-        return deletedUsers[0]
     },
     updateUser(parent, args, { db }, info) {
         const { id, data } = args
@@ -82,12 +67,12 @@ const Mutation = {
         db.posts.push(post)
 
         if (args.data.published) {
-            pubsub.publish('post', { 
+            pubsub.publish('post', {
                 post: {
                     mutation: 'CREATED',
                     data: post
                 }
-             })
+            })
         }
 
         return post
