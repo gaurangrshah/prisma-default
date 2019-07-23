@@ -1,3 +1,5 @@
+import getUserId from '../utils/getUserId'
+
 const Query = {
   users(parent, args, { prisma }, info) {
     const opArgs = {}
@@ -52,20 +54,40 @@ const Query = {
   comments(parent, args, { prisma }, info) {
     return prisma.query.comments(null, info);
   },
-  me() {
-    return {
-      id: '123098',
-      name: 'Mike',
-      email: 'mike@example.com'
-    }
+  me(parent, args, { prisma, request }, info) {
+    const userId = getUserId(request);
+
+    return prisma.query.user({
+      where: {
+        id: userId
+      }
+    }, info)
+
   },
-  post() {
-    return {
-      id: '092',
-      title: 'GraphQL 101',
-      body: '',
-      published: false
-    }
+  async post(parent, args, { prisma, request }, info) {
+    const userId = getUserId(request, false);
+    // 2nd arg sets "requireAuth = false"
+
+    // using the "posts" query because it provides more options to filter by as opposed to the "post" query, which only allows filtering by "id".
+    const posts = await prisma.query.posts({
+      // only returns posts that match criteria:
+      where: {
+        id: args.id, // post id
+        OR: [{
+          published: true // published
+        }, {
+          author: {
+            id: userId // belongs to user
+          }
+        }]
+      }
+    }, info)
+
+    if (posts.length === 0) throw new Error('Post not found');
+    // if no post matches criteria throw error.
+
+    return posts[0];
+    // we only return the first post because we only expect to get one post back.
   }
 }
 
