@@ -20,10 +20,14 @@ const server = new GraphQLServer({
         Post,
         Comment
     },
-    context: {
-        db,
-        pubsub,
-        prisma
+    context(request) {
+        return {
+            // allows following properties to be access by resolvers from context
+            db,
+            pubsub,
+            prisma,
+            request
+        }
     }
 })
 
