@@ -6,13 +6,15 @@ const getUserId = (request, requireAuth = true) => {
   const header = request.request.headers.authorization
 
   if (header) {
-    console.log('header ran')
+    // console.log('header ran')
+
     // only runs if a header is found from the authorization
     const token = header.replace('Bearer ', '')
     // removes the term "Bearer " from the token, NOTE the space after "Bearer "
 
     const decoded = jwt.verify(token, 'thisisasecret')
-    console.log("decoded", decoded)
+    // console.log("decoded", decoded)
+
     return decoded.userId
   }
 
