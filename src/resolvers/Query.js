@@ -70,6 +70,7 @@ const Query = {
     const userId = getUserId(request);
 
     if (!userId) throw new Error("Must be Authenticated")
+
     return prisma.query.user({
       where: {
         id: userId
