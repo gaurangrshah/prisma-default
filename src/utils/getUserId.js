@@ -7,14 +7,14 @@ const getUserId = (request, requireAuth = true) => {
   // adds conditional logic account for not only authorization passed in by queries and mutations, but subscriptions using the connection property off of request. Queries and mutations access the header via http request whereas subscriptions use web sockets to maintain the connection
 
   if (header) {
-    console.log('header ran')
+    // console.log('header ran') //⚠️
 
     // only runs if a header is found from the authorization
     const token = header.replace('Bearer ', '')
     // removes the term "Bearer " from the token, NOTE the space after "Bearer "
 
     const decoded = jwt.verify(token, 'thisisasecret')
-    console.log("decoded", decoded)
+    // console.log("decoded", decoded) //⚠️
 
     return decoded.userid
   }
