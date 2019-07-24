@@ -2,7 +2,10 @@ import getUserId from '../utils/getUserId'
 
 const Query = {
   users(parent, args, { prisma }, info) {
-    const opArgs = {}
+    const opArgs = {
+      first: args.first,
+      skip: args.skip
+    }
 
     if (args.query) {
       // if name or email matches
@@ -15,22 +18,15 @@ const Query = {
 
     return prisma.query.users(opArgs, info) // passes in opArgs
 
-    // nothing, string, object
-
-    // if (!args.query) {
-    //     return db.users
-    // }
-
-    // return db.users.filter((user) => {
-    //     return user.name.toLowerCase().includes(args.query.toLowerCase())
-    // })
   },
   posts(parent, args, { prisma }, info) {
     const opArgs = {
       where: {
         // limit results to only published posts
         published: true
-      }
+      },
+      first: args.first,
+      skip: args.skip
     };
 
     if (args.query) {
@@ -43,15 +39,6 @@ const Query = {
     }
     return prisma.query.posts(opArgs, info);
 
-    // if (!args.query) {
-    //     return db.posts
-    // }
-
-    // return db.posts.filter((post) => {
-    //     const isTitleMatch = post.title.toLowerCase().includes(args.query.toLowerCase())
-    //     const isBodyMatch = post.body.toLowerCase().includes(args.query.toLowerCase())
-    //     return isTitleMatch || isBodyMatch
-    // })
   },
   myPosts(parent, args, { prisma, request }, info) {
     const userId = getUserId(request);
@@ -61,7 +48,9 @@ const Query = {
         author: {
           id: userId
         }
-      }
+      },
+      first: args.first,
+      skip: args.skip
     }
 
     if (args.query) {
@@ -80,6 +69,7 @@ const Query = {
   me(parent, args, { prisma, request }, info) {
     const userId = getUserId(request);
 
+    if (!userId) throw new Error("Must be Authenticated")
     return prisma.query.user({
       where: {
         id: userId
