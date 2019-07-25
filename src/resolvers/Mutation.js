@@ -4,7 +4,7 @@ import generateToken from '../utils/generateToken'
 import hashPassword from '../utils/hashPassword'
 
 const Mutation = {
-    async createUser(parent, args, { prisma }, info) {
+    async createUser(parent, { data }, { prisma }, info) {
 
         if (args.data.password.length < 8) {
             throw new Error('Password must be 8 characters or longer')
@@ -15,7 +15,7 @@ const Mutation = {
 
         const user = await prisma.mutation.createUser({  // creates and returns new user
             data: {
-                ...args.data, // spread out data that gets passed in
+                data, // spread out data that gets passed in
                 password, // override the password, that user passed in, with the hashed version.
             }
         });
