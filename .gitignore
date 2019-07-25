@@ -51,6 +51,8 @@ Thumbs.db
 node_modules/
 #ignore config files
 config/
+#ignore local build folder
+dist/
 
 # Hidden files
 *.DS_Store
