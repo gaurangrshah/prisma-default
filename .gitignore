@@ -1,6 +1,9 @@
 # ignore all files starting with .
 .*
 
+# track this file: .babelrc (i.e. do NOT ignore it)
+!.babelrc
+
 # track this file .gitignore (i.e. do NOT ignore it)
 !.gitignore
 
