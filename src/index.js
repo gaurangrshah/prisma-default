@@ -1,4 +1,4 @@
-// import '@babel/polyfill'
+import '@babel/polyfill/noConflict'
 import "core-js/stable"
 import "regenerator-runtime/runtime"
 
