@@ -1,6 +1,6 @@
+// import "core-js/stable"
 import '@babel/polyfill/noConflict'
-import "core-js/stable"
-import "regenerator-runtime/runtime"
+// import "regenerator-runtime/runtime"
 
 import { GraphQLServer, PubSub } from 'graphql-yoga'
 

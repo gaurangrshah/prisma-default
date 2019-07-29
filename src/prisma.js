@@ -6,7 +6,7 @@ const prisma = new Prisma({
     // endpoint: 'http://192.168.99.100:4466',
     endpoint: process.env.PRISMA_ENDPOINT,
     // secret: 'thisismysupersecrettext',
-    secret: process.env.PRISMA_ENDPOINT,
+    secret: process.env.PRISMA_SECRET,
     fragmentReplacements
 })
 
